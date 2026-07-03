@@ -22,6 +22,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
         
         self.window = window
+        
+        print("---- CORE DATA TEST START ------")
+        
+        CoreDataManager.shared.createStudent(firstName: "Sadiq", lastName: "Jatu", gradeLevel: 11)
+        print("✅ Student created successfully!")
+        
+        let students = CoreDataManager.shared.fetchAllStudents()
+        print("Total students in the database: \(students.count)")
+        
+        for student in students {
+            print("Found Student: \(student.firstName!) \(student.lastName!) \(student.gradeLevel) \(student.id!)")
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

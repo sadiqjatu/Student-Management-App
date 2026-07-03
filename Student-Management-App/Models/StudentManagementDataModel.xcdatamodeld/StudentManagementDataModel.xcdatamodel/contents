@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="24G325" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Assignment" representedClassName=".Assignment" syncable="YES" codeGenerationType="class">
+        <attribute name="dueDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="maxPoints" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="weight" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="grades" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grade" inverseName="parentAssignment" inverseEntity="Grade"/>
+    </entity>
+    <entity name="AttendanceRecord" representedClassName=".AttendanceRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="parentStudent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Student" inverseName="attendanceRecords" inverseEntity="Student"/>
+    </entity>
+    <entity name="Grade" representedClassName=".Grade" syncable="YES" codeGenerationType="class">
+        <attribute name="earnedPoints" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="parentAssignment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Assignment" inverseName="grades" inverseEntity="Assignment"/>
+        <relationship name="parentStudent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Student" inverseName="grades" inverseEntity="Student"/>
+    </entity>
+    <entity name="Student" representedClassName=".Student" syncable="YES" codeGenerationType="class">
+        <attribute name="firstName" attributeType="String"/>
+        <attribute name="gradeLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastName" attributeType="String"/>
+        <relationship name="attendanceRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AttendanceRecord" inverseName="parentStudent" inverseEntity="AttendanceRecord"/>
+        <relationship name="grades" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grade" inverseName="parentStudent" inverseEntity="Grade"/>
+    </entity>
+</model>
