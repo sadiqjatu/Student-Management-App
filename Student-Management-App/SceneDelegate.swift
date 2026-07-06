@@ -6,11 +6,11 @@
 //
 
 import UIKit
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -18,22 +18,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window  = UIWindow(windowScene: windowScene)
         window.windowScene        = windowScene
-        window.rootViewController = HomeVC()
+        window.rootViewController = SMTabBarController()
         window.makeKeyAndVisible()
         
         self.window = window
-        
-        print("---- CORE DATA TEST START ------")
-        
-        CoreDataManager.shared.createStudent(firstName: "Sadiq", lastName: "Jatu", gradeLevel: 11)
-        print("✅ Student created successfully!")
-        
-        let students = CoreDataManager.shared.fetchAllStudents()
-        print("Total students in the database: \(students.count)")
-        
-        for student in students {
-            print("Found Student: \(student.firstName!) \(student.lastName!) \(student.gradeLevel) \(student.id!)")
-        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
