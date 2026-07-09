@@ -12,6 +12,11 @@ class GradebookVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemYellow
+        configureViewController()
+    }
+    
+    
+    func configureViewController() {
+        view.backgroundColor = .systemGray5
     }
 }

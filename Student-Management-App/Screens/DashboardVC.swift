@@ -12,10 +12,12 @@ class DashboardVC: UIViewController {
     let dateLabel = SMTertitaryTitleLabel(textAlignment: .left, fontSize: 18)
     
     var collectionView: UICollectionView!
-    let sectionDatasource: [[UIColor]] = [ [.systemYellow, .systemRed],
-                                           [.systemRed, .systemYellow, .systemRed],
-                                           [.systemCyan, .systemRed]
+    let sectionDatasource: [[String]] = [ ["142", "94.2%"],
+                                           ["134", "6", "2"],
+                                           ["4", "D"]
     ]
+    
+    let attentionStudents: [String] = ["Alex Jones", "Jane Smith"]
     let padding: CGFloat = 16
 
     override func viewDidLoad() {
@@ -47,15 +49,17 @@ class DashboardVC: UIViewController {
     
     
     func configureCollectionView() {
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: createDashboardLayout())
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: UIHelper.createDashboardLayout())
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
+        collectionView.delegate   = self
         collectionView.backgroundColor = .clear
         
         collectionView.register(TopCardCell.self, forCellWithReuseIdentifier: TopCardCell.reuseID)
         collectionView.register(MetricCell.self, forCellWithReuseIdentifier: MetricCell.reuseID)
         collectionView.register(AttentionCell.self, forCellWithReuseIdentifier: AttentionCell.reuseID)
+        collectionView.register(HeaderCell.self, forSupplementaryViewOfKind: HeaderCell.reuseID, withReuseIdentifier: HeaderCell.reuseID)
         
         view.addSubview(collectionView)
         
@@ -65,44 +69,6 @@ class DashboardVC: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-    }
-    
-    
-    func createDashboardLayout() -> UICollectionViewLayout {
-        return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnviroment) -> NSCollectionLayoutSection? in
-            
-            switch sectionIndex {
-            case 0: // Section 0: Top cards (2 horizontal items)
-                let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-                let item      = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(120))
-                let group     = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                let section   = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous
-                
-                return section
-                
-            case 1: // Section 1: Metrics (3 horizontal items)
-                let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.333), heightDimension: .fractionalHeight(1.0))
-                let item      = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80))
-                let group     = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                return NSCollectionLayoutSection(group: group)
-                
-            default: // Section 2: Attention required list (Vertical items)
-                let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-                let item      = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(60))
-                let group     = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-                
-                return NSCollectionLayoutSection(group: group)
-            }
-        }
     }
 }
 
@@ -128,18 +94,94 @@ extension DashboardVC: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TopCardCell.reuseID, for: indexPath) as! TopCardCell
-            cell.backgroundColor = sectionDatasource[indexPath.section][indexPath.item]
+            
+            switch indexPath.item {
+            case 0:
+                cell.set(type: .roster, value: sectionDatasource[indexPath.section][indexPath.item])
+            default:
+                cell.set(type: .attendance, value: sectionDatasource[indexPath.section][indexPath.item])
+            }
             return cell
             
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MetricCell.reuseID, for: indexPath) as! MetricCell
-            cell.backgroundColor = sectionDatasource[indexPath.section][indexPath.item]
+            
+            switch indexPath.item {
+            case 0:
+                cell.set(type: .present, value: sectionDatasource[indexPath.section][indexPath.item])
+            case 1:
+                cell.set(type: .absent, value: sectionDatasource[indexPath.section][indexPath.item])
+            default:
+                cell.set(type: .tardy, value: sectionDatasource[indexPath.section][indexPath.item])
+            }
             return cell
             
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AttentionCell.reuseID, for: indexPath) as! AttentionCell
-            cell.backgroundColor = sectionDatasource[indexPath.section][indexPath.item]
+            
+            switch indexPath.item {
+            case 0:
+                cell.set(type: .attendance, studentName: "Alex Jones", status: "\(sectionDatasource[indexPath.section][indexPath.item]) Absences")
+            default:
+                cell.set(type: .grade, studentName: "Jane Smith", status: "\(sectionDatasource[indexPath.section][indexPath.item]) Average")
+            }
+            
             return cell
+        }
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == HeaderCell.reuseID {
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCell.reuseID, for: indexPath) as! HeaderCell
+            
+            return cell
+        }
+        
+        return UICollectionReusableView()
+    }
+}
+
+
+extension DashboardVC: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath.section == 1 {
+            let totalItems       = collectionView.numberOfItems(inSection: indexPath.section)
+            guard let metricCell = cell as? MetricCell else { return }
+            
+            metricCell.containerView.layer.cornerRadius  = 0
+            metricCell.containerView.layer.maskedCorners = []
+            
+            if indexPath.item == 0 {
+                metricCell.containerView.layer.cornerRadius  = 18
+                metricCell.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+            } else if indexPath.item == totalItems - 1 {
+                metricCell.containerView.layer.cornerRadius  = 18
+                metricCell.containerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+            }
+            
+            metricCell.containerView.clipsToBounds = true
+        }
+        
+        
+        if indexPath.section == 2 {
+            let totalItems          = collectionView.numberOfItems(inSection: indexPath.section)
+            guard let attentionCell = cell as? AttentionCell else { return }
+            
+            attentionCell.containerView.layer.cornerRadius  = 0
+            attentionCell.containerView.layer.maskedCorners = []
+            
+            if indexPath.row == 0 {
+                attentionCell.containerView.layer.cornerRadius  = 18
+                attentionCell.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            } else if indexPath.row == totalItems - 1 {
+                attentionCell.containerView.layer.cornerRadius  = 18
+                attentionCell.containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            }
+            
+            attentionCell.containerView.clipsToBounds = true
         }
     }
 }

@@ -8,7 +8,9 @@
 import UIKit
 
 class StudentsVC: UIViewController {
-
+    
+    let searchController = UISearchController(searchResultsController: nil)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -17,6 +19,23 @@ class StudentsVC: UIViewController {
 
     
     func configureViewController() {
-        view.backgroundColor = .systemYellow
+        view.backgroundColor = .systemGray5
+        
+        let addPersonButton       = UIButton(type: .system)
+        addPersonButton.setImage(Icons.personAdd, for: .normal)
+        addPersonButton.tintColor = Colors.blue
+        addPersonButton.addTarget(self, action: #selector(addPersonButtonPressed), for: .touchUpInside)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addPersonButton)
+    }
+    
+    
+    @objc func addPersonButtonPressed() {
+        print("Add person button pressed")
+    }
+    
+    
+    func configureSearchController() {
+        
     }
 }
