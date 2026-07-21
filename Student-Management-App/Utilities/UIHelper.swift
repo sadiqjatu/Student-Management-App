@@ -19,11 +19,16 @@ enum UIHelper {
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(140))
                 let group     = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                group.interItemSpacing = .fixed(16)
                 group.contentInsets    = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                group.interItemSpacing = .fixed(16)
                 
                 let section   = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .continuous
+                
+                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(34))
+                let header     = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: DateCell.reuseID, alignment: .top)
+                header.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+                section.boundarySupplementaryItems.append(header)
                 
                 return section
                 
@@ -51,7 +56,7 @@ enum UIHelper {
                 section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
                 section.interGroupSpacing = 2
                 
-                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(60))
+                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
                 let header     = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: HeaderCell.reuseID, alignment: .top)
                 
                 section.boundarySupplementaryItems.append(header)

@@ -15,6 +15,8 @@ enum Icons {
     static let book              = UIImage(systemName: "book")
     static let calendarCheckmark = UIImage(systemName: "calendar.badge.checkmark")
     static let personAdd         = UIImage(systemName: "person.badge.plus")
+    static let person            = UIImage(systemName: "person")
+    static let chevronRight      = UIImage(systemName: "chevron.right")
 }
 
 

@@ -1,20 +1,22 @@
 //
-//  HeaderCell.swift
+//  DateCell.swift
 //  Student-Management-App
 //
-//  Created by Sadiq Jatu on 07/07/26.
+//  Created by Sadiq Jatu on 11/07/26.
 //
 
 import UIKit
 
-class HeaderCell: UICollectionReusableView {
+class DateCell: UICollectionReusableView {
+        
+    static let reuseID = "DateCell"
+    let containerView  = UIView()
+    let dateLabel      = SMTertitaryTitleLabel(textAlignment: .left, fontSize: 22)
     
-    static let reuseID  = "HeaderCell"
-    let containerView   = UIView()
-    let headerTitle     = SMTitleLabel(textAlignment: .left, fontSize: 24)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         configure()
     }
     
@@ -26,11 +28,11 @@ class HeaderCell: UICollectionReusableView {
     
     private func configure() {
         addSubview(containerView)
-        containerView.addSubview(headerTitle)
+        containerView.addSubview(dateLabel)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor       = .clear
-        headerTitle.text      = "Attention Required"
+        backgroundColor = .clear
+        dateLabel.text  = "June 24, 2026"
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: self.topAnchor),
@@ -38,10 +40,10 @@ class HeaderCell: UICollectionReusableView {
             containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             
-            headerTitle.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            headerTitle.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
-            headerTitle.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
-            headerTitle.heightAnchor.constraint(equalToConstant: 26)
+            dateLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            dateLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            dateLabel.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 }

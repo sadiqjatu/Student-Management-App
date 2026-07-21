@@ -22,6 +22,12 @@ class SMIconView: UIView {
     }
     
     
+    init(iconSize: CGFloat, cornerRadius: CGFloat) {
+        super.init(frame: .zero)
+        configure(iconSize: iconSize, cornerRadius: cornerRadius)
+    }
+    
+    
     private func configure(iconSize: CGFloat, cornerRadius: CGFloat) {
         addSubview(icon)
         

@@ -24,7 +24,6 @@ class DashboardVC: UIViewController {
         super.viewDidLoad()
         
         configureViewController()
-        configureDateLabel()
         configureCollectionView()
     }
     
@@ -32,19 +31,6 @@ class DashboardVC: UIViewController {
     func configureViewController() {
         view.backgroundColor = .systemGray5
         navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    
-    func configureDateLabel() {
-        view.addSubview(dateLabel)
-        dateLabel.text = "June 24, 2026"
-        
-        NSLayoutConstraint.activate([
-            dateLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            dateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
-            dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            dateLabel.heightAnchor.constraint(equalToConstant: 22)
-        ])
     }
     
     
@@ -60,14 +46,15 @@ class DashboardVC: UIViewController {
         collectionView.register(MetricCell.self, forCellWithReuseIdentifier: MetricCell.reuseID)
         collectionView.register(AttentionCell.self, forCellWithReuseIdentifier: AttentionCell.reuseID)
         collectionView.register(HeaderCell.self, forSupplementaryViewOfKind: HeaderCell.reuseID, withReuseIdentifier: HeaderCell.reuseID)
+        collectionView.register(DateCell.self, forSupplementaryViewOfKind: DateCell.reuseID, withReuseIdentifier: DateCell.reuseID)
         
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: dateLabel.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
@@ -138,6 +125,12 @@ extension DashboardVC: UICollectionViewDataSource {
             return cell
         }
         
+        if kind == DateCell.reuseID {
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: DateCell.reuseID, withReuseIdentifier: DateCell.reuseID, for: indexPath) as! DateCell
+            
+            return cell
+        }
+        
         return UICollectionReusableView()
     }
 }
@@ -182,6 +175,19 @@ extension DashboardVC: UICollectionViewDelegate {
             }
             
             attentionCell.containerView.clipsToBounds = true
+        }
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if indexPath.section == 2 {
+            guard let cell = collectionView.cellForItem(at: indexPath) as? AttentionCell else { return }
+            cell.containerView.backgroundColor = .systemGray5
+            
+            UIView.animate(withDuration: 0.5) {
+                cell.containerView.backgroundColor = .systemBackground
+            }
         }
     }
 }

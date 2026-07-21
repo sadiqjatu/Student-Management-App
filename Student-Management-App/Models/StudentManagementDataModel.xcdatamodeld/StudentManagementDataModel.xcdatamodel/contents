@@ -20,7 +20,7 @@
     <entity name="Student" representedClassName=".Student" syncable="YES" codeGenerationType="class">
         <attribute name="firstName" attributeType="String"/>
         <attribute name="gradeLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="String"/>
         <attribute name="lastName" attributeType="String"/>
         <relationship name="attendanceRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AttendanceRecord" inverseName="parentStudent" inverseEntity="AttendanceRecord"/>
         <relationship name="grades" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Grade" inverseName="parentStudent" inverseEntity="Grade"/>

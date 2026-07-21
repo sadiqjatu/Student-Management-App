@@ -12,11 +12,16 @@ class CoreDataManager {
     
     static let shared = CoreDataManager()
     let context       = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let currentYear   = Calendar.current.component(.year, from: Date())
     
     
     func createStudent(firstName: String, lastName: String, gradeLevel: Int16) {    // Save Student to the database
+        
+        // Store id which consists -> current Year + 3 random characters
+        let studentID = String(currentYear) + "-" + UUID().uuidString.prefix(3)
+        
         let student        = Student(context: context)
-        student.id         = UUID()
+        student.id         = studentID
         student.firstName  = firstName
         student.lastName   = lastName
         student.gradeLevel = gradeLevel
