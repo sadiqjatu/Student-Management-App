@@ -76,6 +76,7 @@ class StudentsVC: UIViewController {
         ])
     }
     
+    //MARK: - Core data fetch method
     
     func fetchAllStudents() {
         allStudents = CoreDataManager.shared.fetchAllStudents()
@@ -172,6 +173,13 @@ extension StudentsVC: UITableViewDelegate {
         UIView.animate(withDuration: 0.5) {
             cell.containerView.backgroundColor = .systemBackground
         }
+        
+        //get current student either from filtered array or original array
+        let student = isSearching ? filteredStudents[indexPath.row] : allStudents[indexPath.row]
+        
+        //inject the student object to the initializer 
+        let studentDetailVC = StudentDetailVC(selectedStudent: student)
+        navigationController?.pushViewController(studentDetailVC, animated: true)
     }
 }
 

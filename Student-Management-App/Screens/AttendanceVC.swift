@@ -11,7 +11,12 @@ class AttendanceVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .systemCyan
+        
+        configureViewController()
+    }
+    
+    
+    func configureViewController() {
+        view.backgroundColor = .systemGray5
     }
 }
