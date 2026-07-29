@@ -7,17 +7,17 @@
 
 import UIKit
 
+
 class DashboardVC: UIViewController {
     
     let dateLabel = SMTertitaryTitleLabel(textAlignment: .left, fontSize: 18)
     
     var collectionView: UICollectionView!
-    let sectionDatasource: [[String]] = [ ["142", "94.2%"],
-                                           ["134", "6", "2"],
-                                           ["4", "D"]
-    ]
     
-    let attentionStudents: [String] = ["Alex Jones", "Jane Smith"]
+    var topCardData:   [TopCardData]     = []
+    var metricData:    [MetricData]      = []
+    var attentionData: [AttentionRecord] = []
+    
     let padding: CGFloat = 16
 
     override func viewDidLoad() {
@@ -25,6 +25,7 @@ class DashboardVC: UIViewController {
         
         configureViewController()
         configureCollectionView()
+        loadMockData()
     }
     
     
@@ -57,6 +58,29 @@ class DashboardVC: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    
+    private func loadMockData() {
+        
+        topCardData   = [
+            TopCardData(type: .roster, value: "142"),
+            TopCardData(type: .attendance, value: "94.2%")
+        ]
+        
+        metricData    = [
+            MetricData(type: .present, value: "134"),
+            MetricData(type: .absent, value: "6"),
+            MetricData(type: .tardy, value: "2")
+        ]
+        
+        attentionData = [
+            AttentionRecord(studentName: "Alex Jones", value: "4", issueType: .attendance),
+            AttentionRecord(studentName: "Jane Smith", value: "D", issueType: .grade),
+            AttentionRecord(studentName: "Sadiq Jatu", value: "8", issueType: .attendance)
+        ]
+        
+        collectionView.reloadData()
+    }
 }
 
 
@@ -71,7 +95,7 @@ extension DashboardVC: UICollectionViewDataSource {
         switch section {
         case 0: return 2    //Total roster, Total attendance
         case 1: return 3    //Present, Absent, Tardy
-        case 2: return 2
+        case 2: return attentionData.count
         default: return 0
         }
     }
@@ -81,36 +105,39 @@ extension DashboardVC: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TopCardCell.reuseID, for: indexPath) as! TopCardCell
+            let topCardRecord = topCardData[indexPath.item]
             
-            switch indexPath.item {
-            case 0:
-                cell.set(type: .roster, value: sectionDatasource[indexPath.section][indexPath.item])
-            default:
-                cell.set(type: .attendance, value: sectionDatasource[indexPath.section][indexPath.item])
+            switch topCardRecord.type {
+            case .attendance:
+                cell.set(type: .attendance, value: topCardRecord.value)
+            case .roster:
+                cell.set(type: .roster, value: topCardRecord.value)
             }
             return cell
             
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MetricCell.reuseID, for: indexPath) as! MetricCell
+            let metricRecord = metricData[indexPath.item]
             
-            switch indexPath.item {
-            case 0:
-                cell.set(type: .present, value: sectionDatasource[indexPath.section][indexPath.item])
-            case 1:
-                cell.set(type: .absent, value: sectionDatasource[indexPath.section][indexPath.item])
-            default:
-                cell.set(type: .tardy, value: sectionDatasource[indexPath.section][indexPath.item])
+            switch metricRecord.type {
+            case .present:
+                cell.set(type: .present, value: metricRecord.value)
+            case .absent:
+                cell.set(type: .absent, value: metricRecord.value)
+            case .tardy:
+                cell.set(type: .tardy, value: metricRecord.value)
             }
             return cell
             
         default:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AttentionCell.reuseID, for: indexPath) as! AttentionCell
+            let cell   = collectionView.dequeueReusableCell(withReuseIdentifier: AttentionCell.reuseID, for: indexPath) as! AttentionCell
+            let record = attentionData[indexPath.item]
             
-            switch indexPath.item {
-            case 0:
-                cell.set(type: .attendance, studentName: "Alex Jones", status: "\(sectionDatasource[indexPath.section][indexPath.item]) Absences")
-            default:
-                cell.set(type: .grade, studentName: "Jane Smith", status: "\(sectionDatasource[indexPath.section][indexPath.item]) Average")
+            switch record.issueType {
+            case .attendance:
+                cell.set(type: .attendance, studentName: record.studentName, status: "\(record.value) Absences")
+            case .grade:
+                cell.set(type: .grade, studentName: record.studentName, status: "\(record.value) Average")
             }
             
             return cell
@@ -119,6 +146,7 @@ extension DashboardVC: UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
         if kind == HeaderCell.reuseID {
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCell.reuseID, for: indexPath) as! HeaderCell
             

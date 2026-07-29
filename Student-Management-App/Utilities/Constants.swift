@@ -22,6 +22,7 @@ enum Icons {
 
 enum Colors {
     
+    static let darkBlue          = UIColor(red: 0/255, green: 100/255, blue: 208/255, alpha: 1)
     static let blue              = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
     static let lightBlue         = UIColor(red: 225/255, green: 239/255, blue: 255/255, alpha: 1)
     
@@ -33,4 +34,6 @@ enum Colors {
     
     static let yellow            = UIColor(red: 255/255, green: 156/255, blue: 17/255, alpha: 1)
     static let lightYellow       = UIColor(red: 255/255, green: 233/255, blue: 199/255, alpha: 1)
+    
+    static let lightGray         = UIColor(red: 190/255, green: 219/255, blue: 250/255, alpha: 1)
 }

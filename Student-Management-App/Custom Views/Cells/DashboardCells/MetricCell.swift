@@ -15,8 +15,8 @@ class MetricCell: UICollectionViewCell {
     
     static let reuseID   = "MetricCell"
     let containerView    = UIView()
-    let metricValue      = SMTitleLabel(textAlignment: .left, fontSize: 28)
-    let metricValueLabel = SMTertitaryTitleLabel(textAlignment: .left, fontSize: 16)
+    let metricValue      = SMTitleLabel(textAlignment: .center, fontSize: 28)
+    let metricValueLabel = SMTertitaryTitleLabel(textAlignment: .center, fontSize: 16)
     
     override init(frame: CGRect) {
         super.init(frame: frame)

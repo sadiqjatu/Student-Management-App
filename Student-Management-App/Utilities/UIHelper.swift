@@ -75,8 +75,9 @@ enum UIHelper {
                 let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
                 let item      = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(240))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(220))
                 let group     = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                group.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
                 
                 let section   = NSCollectionLayoutSection(group: group)
                 
@@ -86,9 +87,11 @@ enum UIHelper {
                 let itemSize  = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.333), heightDimension: .fractionalHeight(1.0))
                 let item      = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(110))
                 let group     = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
+                group.contentInsets    = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16)
+                group.interItemSpacing = .fixed(2)
                 
                 let section   = NSCollectionLayoutSection(group: group)
                 
@@ -102,6 +105,13 @@ enum UIHelper {
                 let group     = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section   = NSCollectionLayoutSection(group: group)
+                section.contentInsets     = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16)
+                section.interGroupSpacing = 2
+                
+                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
+                let header     = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: StudentSegmentControlCell.reuseID, alignment: .top)
+                
+                section.boundarySupplementaryItems.append(header)
                 
                 return section
             }
