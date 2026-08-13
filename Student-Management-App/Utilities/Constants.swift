@@ -17,6 +17,7 @@ enum Icons {
     static let personAdd         = UIImage(systemName: "person.badge.plus")
     static let person            = UIImage(systemName: "person")
     static let chevronRight      = UIImage(systemName: "chevron.right")
+    static let assignmentAdd     = UIImage(systemName: "book.badge.plus")
 }
 
 

@@ -61,26 +61,26 @@ class StudentLogCell: UICollectionViewCell {
     }
     
     
-    func set(type: StudentLogCellType, value: String, testName: String?) {
+    func set(type: StudentLogCellType, value: String, testName: String?, maxPoints: String?) {
         
         switch type {
             
         case .present:
             logValue.textColor     = Colors.green
             logValue.text          = "Present"
-            logNameLabel.text      = value
+            logNameLabel.text      = value.formatToMonthDateYear()
         case .absent:
             logValue.textColor     = Colors.red
             logValue.text          = "Absent"
-            logNameLabel.text      = value
+            logNameLabel.text      = value.formatToMonthDateYear()
         case .tardy:
             logValue.textColor     = Colors.yellow
             logValue.text          = "Tardy"
-            logNameLabel.text      = value
+            logNameLabel.text      = value.formatToMonthDateYear()
         case .grade:
             logValue.textColor     = .label
             logNameLabel.textColor = .label
-            logValue.text          = "\(value)/100"
+            logValue.text          = "\(value)/\(maxPoints ?? "N/A")"
             logNameLabel.text      = testName
         }
     }

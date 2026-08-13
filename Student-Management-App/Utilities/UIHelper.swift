@@ -23,7 +23,7 @@ enum UIHelper {
                 group.interItemSpacing = .fixed(16)
                 
                 let section   = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous
+//                section.orthogonalScrollingBehavior = .continuous
                 
                 let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(34))
                 let header     = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: DateCell.reuseID, alignment: .top)
@@ -116,5 +116,13 @@ enum UIHelper {
                 return section
             }
         }
+    }
+    
+    
+    static func createTertiaryLabel(label: String, textAlignment: NSTextAlignment) -> SMTertitaryTitleLabel {
+        let textLabel  = SMTertitaryTitleLabel(textAlignment: textAlignment, fontSize: 16)
+        textLabel.text = label
+        
+        return textLabel
     }
 }

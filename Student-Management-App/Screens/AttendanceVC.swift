@@ -30,14 +30,11 @@ class AttendanceVC: UIViewController {
     
     func loadData(for dateString: String) {
         //1. Fetch all the students
-        let studentRequest: NSFetchRequest<Student>        = Student.fetchRequest()
-        self.students = (try? context.fetch(studentRequest)) ?? []
+        self.students    = CoreDataManager.shared.fetchAllStudents()
         
         //2. Fetch attendance records for this EXACT date
-        let recordRequest: NSFetchRequest<AttendanceRecord> = AttendanceRecord.fetchRequest()
-        recordRequest.predicate = NSPredicate(format: "date == %@", dateString)
-        
-        let todayRecords        = (try? context.fetch(recordRequest)) ?? []
+        print(dateString)
+        let todayRecords = CoreDataManager.shared.fetchAttendanceRecordsForCurrentDate(for: dateString)
         
         //3. Build the dictionary (Lookup Map)
         attendanceMap.removeAll()
@@ -54,7 +51,6 @@ class AttendanceVC: UIViewController {
     
     
     func updateAttendanceRecord(for student: Student, newStatus: String, currentDate: String) {
-        print(currentDate, newStatus)
         //1. Record already exists
         if let record = attendanceMap[student] {
             //UPDATE existing record
@@ -72,6 +68,7 @@ class AttendanceVC: UIViewController {
         
         do {
             try context.save()
+            student.absencesCount = Int16(CoreDataManager.shared.fetchStudentAbsscenesCount(forStudent: student))
         } catch {
             print("Error saving or updating attendance records \(error.localizedDescription)")
         }
@@ -110,15 +107,20 @@ class AttendanceVC: UIViewController {
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         
         //Configuration: Set the calendar type and font design
-        calendarView.calendar   = Calendar(identifier: .gregorian)
-        calendarView.locale     = .current
-        calendarView.fontDesign = .rounded
+        calendarView.calendar        = Calendar.current
+        calendarView.locale          = .current
+        calendarView.fontDesign      = .rounded
         calendarView.backgroundColor = .systemBackground
-        calendarView.timeZone   = TimeZone(identifier: "UTC")
+        calendarView.timeZone        = TimeZone.current
         
         //Define available date range
         let pastDate = Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? Date()
-        calendarView.availableDateRange = DateInterval(start: pastDate, end: Date())
+        let currentDate = Date()
+        let localOffset = TimeInterval(TimeZone.current.secondsFromGMT(for: currentDate))
+        let localDeviceDate = currentDate.addingTimeInterval(localOffset)
+        
+        calendarView.availableDateRange = DateInterval(start: pastDate, end: localDeviceDate)
+        print(localDeviceDate)
         
         //Delegates & selection
         //Set up single-date selection behaviour
@@ -150,7 +152,7 @@ class AttendanceVC: UIViewController {
             tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
         ])
     }
 }

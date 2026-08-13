@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct AttendanceData {
-    let type: MetricType
-    let value: String
-}
+//struct AttendanceData {
+//    let type: MetricType
+//    let value: String
+//}
 
 
-struct GradeData {
-    let testName: String
-    let testScore: String
-}
+//struct GradeData {
+//    let testName: String
+//    let testScore: String
+//}

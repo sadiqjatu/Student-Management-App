@@ -17,6 +17,7 @@ class DashboardVC: UIViewController {
     var topCardData:   [TopCardData]     = []
     var metricData:    [MetricData]      = []
     var attentionData: [AttentionRecord] = []
+    let currentDate                      = Date()
     
     let padding: CGFloat = 16
 
@@ -25,7 +26,12 @@ class DashboardVC: UIViewController {
         
         configureViewController()
         configureCollectionView()
-        loadMockData()
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        loadData()
+        print(currentDate.convertToMonthDayYear())
     }
     
     
@@ -60,24 +66,41 @@ class DashboardVC: UIViewController {
     }
     
     
-    private func loadMockData() {
+    private func loadData() {
+        
+        //Fetch students count
+        let studentsCount = CoreDataManager.shared.fetchStudentCount()
+        print(studentsCount)
+        
+        //Fetch attendance count for current date & status
+        let dateString   = currentDate.convertToYearMonthDay()
+        let presentCount = CoreDataManager.shared.fetchAttendanceCount(for: dateString, status: "P")
+        let absentCount  = CoreDataManager.shared.fetchAttendanceCount(for: dateString, status: "A")
+        let tardyCount   = CoreDataManager.shared.fetchAttendanceCount(for: dateString, status: "T")
+        
+        var avgAttendance: Float = 0.0
+        
+        if studentsCount > 0 {
+            avgAttendance = Float(presentCount + tardyCount) * 100.0 / Float(studentsCount)
+        } else {
+            avgAttendance = 0.0
+        }
         
         topCardData   = [
-            TopCardData(type: .roster, value: "142"),
-            TopCardData(type: .attendance, value: "94.2%")
+            TopCardData(type: .roster, value: "\(studentsCount)"),
+            TopCardData(type: .attendance, value: "\(avgAttendance.formatted(.number.precision(.fractionLength(1))))%")
         ]
         
         metricData    = [
-            MetricData(type: .present, value: "134"),
-            MetricData(type: .absent, value: "6"),
-            MetricData(type: .tardy, value: "2")
+            MetricData(type: .present, value: "\(presentCount)"),
+            MetricData(type: .absent, value: "\(absentCount)"),
+            MetricData(type: .tardy, value: "\(tardyCount)")
         ]
         
-        attentionData = [
-            AttentionRecord(studentName: "Alex Jones", value: "4", issueType: .attendance),
-            AttentionRecord(studentName: "Jane Smith", value: "D", issueType: .grade),
-            AttentionRecord(studentName: "Sadiq Jatu", value: "8", issueType: .attendance)
-        ]
+        //Fetch students who has greater or equal to 4 absences
+        let targetMonth    = Date().convertToYearMonth()
+        attentionData.removeAll()
+        attentionData  = CoreDataManager.shared.fetchStudentAttentionData(month: targetMonth)
         
         collectionView.reloadData()
     }
@@ -155,6 +178,7 @@ extension DashboardVC: UICollectionViewDataSource {
         
         if kind == DateCell.reuseID {
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: DateCell.reuseID, withReuseIdentifier: DateCell.reuseID, for: indexPath) as! DateCell
+            cell.dateLabel.text = currentDate.convertToMonthDayYear()
             
             return cell
         }
@@ -200,6 +224,11 @@ extension DashboardVC: UICollectionViewDelegate {
             } else if indexPath.row == totalItems - 1 {
                 attentionCell.containerView.layer.cornerRadius  = 18
                 attentionCell.containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            }
+            
+            if totalItems == 1{
+                attentionCell.containerView.layer.cornerRadius = 18
+                attentionCell.containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             }
             
             attentionCell.containerView.clipsToBounds = true

@@ -38,6 +38,7 @@ class AddStudentVC: UIViewController {
         super.viewDidLoad()
         
         configureViewController()
+        createDismissKeyboardGesture()
         configureContainerView()
         setupGradeMenu()
         configureStackView()
@@ -56,6 +57,12 @@ class AddStudentVC: UIViewController {
         cancelButton.addTarget(self, action: #selector(dismissVC), for: .touchUpInside)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cancelButton)
+    }
+    
+    
+    func createDismissKeyboardGesture() {
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tap)
     }
     
     
@@ -88,14 +95,16 @@ class AddStudentVC: UIViewController {
         let firstNameRow        = firstNameResult.rowStack
         self.firstNameTextfield = firstNameResult.textField
         self.firstNameLabel     = firstNameResult.label
-        firstNameTextfield.delegate = self
+        firstNameTextfield.delegate      = self
+        firstNameTextfield.returnKeyType = .next
         
         
         let lastNameResult     = createFormRow(labelText: "Last Name", placeholder: "Enter last name")
         let lastNameRow        = lastNameResult.rowStack
         self.lastNameTextField = lastNameResult.textField
         self.lastNameLabel     = lastNameResult.label
-        lastNameTextField.delegate  = self
+        lastNameTextField.delegate      = self
+        lastNameTextField.returnKeyType = .done
         
         
         let gradeRow           = createGradeRow()
@@ -121,7 +130,7 @@ class AddStudentVC: UIViewController {
         NSLayoutConstraint.activate([
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            saveButton.bottomAnchor.constraint(greaterThanOrEqualTo: view.bottomAnchor, constant: -16),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             saveButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
@@ -159,7 +168,7 @@ class AddStudentVC: UIViewController {
         
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
         let stackView  = UIStackView(arrangedSubviews: [label, spacer, textField])
         stackView.axis = .horizontal
@@ -170,7 +179,7 @@ class AddStudentVC: UIViewController {
         
         stackView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        textField.widthAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
+        textField.widthAnchor.constraint(greaterThanOrEqualToConstant: 150).isActive = true
         
         return (stackView, textField, label)
     }
@@ -266,5 +275,20 @@ extension AddStudentVC: UITextFieldDelegate {
                 self.lastNameTextField.attributedPlaceholder = NSAttributedString(string: "Enter last name", attributes: [NSAttributedString.Key.foregroundColor : UIColor.placeholderText])
             }
         }
+    }
+    
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case firstNameTextfield:
+            lastNameTextField.becomeFirstResponder()
+        case lastNameTextField:
+            textField.resignFirstResponder()
+            saveButtonPressed()
+        default:
+            break
+        }
+        
+        return true
     }
 }

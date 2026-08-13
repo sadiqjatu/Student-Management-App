@@ -32,7 +32,6 @@ class DateCell: UICollectionReusableView {
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .clear
-        dateLabel.text  = "June 24, 2026"
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: self.topAnchor),

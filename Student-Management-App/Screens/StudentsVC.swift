@@ -187,6 +187,6 @@ extension StudentsVC: UITableViewDelegate {
 extension StudentsVC: AddStudentVCDelegate {
     
     func didTapSaveButton() {
-        self.fetchAllStudents()
+        fetchAllStudents()
     }
 }

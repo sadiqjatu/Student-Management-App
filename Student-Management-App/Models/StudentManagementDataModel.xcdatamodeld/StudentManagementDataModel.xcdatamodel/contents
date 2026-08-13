@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="24G325" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Assignment" representedClassName=".Assignment" syncable="YES" codeGenerationType="class">
-        <attribute name="dueDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="avgScore" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="dueDate" attributeType="String"/>
         <attribute name="maxPoints" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="weight" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -18,6 +19,8 @@
         <relationship name="parentStudent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Student" inverseName="grades" inverseEntity="Student"/>
     </entity>
     <entity name="Student" representedClassName=".Student" syncable="YES" codeGenerationType="class">
+        <attribute name="absencesCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="currentGradePercentage" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="firstName" attributeType="String"/>
         <attribute name="gradeLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>

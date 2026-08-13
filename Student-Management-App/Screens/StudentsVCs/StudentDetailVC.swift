@@ -14,9 +14,8 @@ class StudentDetailVC: UIViewController {
     var selectedStudent: Student!
     var collectionView: UICollectionView!       //Creates the collection view
     
-    var attendanceData: [AttendanceData]  = []
-    var gradeData:      [GradeData]       = []
-    
+    var attendanceData: [AttendanceRecord]  = []
+    var gradeData:      [Grade]             = []
     
     var selectedSegmentControlIndex = 0
     
@@ -36,15 +35,29 @@ class StudentDetailVC: UIViewController {
         
         configureViewController()
         configureCollectionView()
-        loadMockData()
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        loadData()
+    }
+    
+    
+    private func loadData() {
+        //Fetch all attendance data for selected student
+        attendanceData = CoreDataManager.shared.fetchRecords(for: selectedStudent)
+        
+        //Fetch all the grades for selected student
+        gradeData     = CoreDataManager.shared.fetchAllGrades(for: selectedStudent)
+        
+        collectionView.reloadData()
     }
     
     
     func configureViewController() {
         view.backgroundColor = .systemGray5
-        
-        guard let selectedStudent = selectedStudent else { return }
-        print(selectedStudent.firstName!, selectedStudent.lastName!)
     }
     
     
@@ -73,27 +86,6 @@ class StudentDetailVC: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-    
-    
-    private func loadMockData() {
-        
-        attendanceData = [
-            AttendanceData(type: .absent, value: "June 25, 2026"),
-            AttendanceData(type: .present, value: "June 24, 2026"),
-            AttendanceData(type: .absent, value: "June 23, 2026"),
-            AttendanceData(type: .tardy, value: "June 22, 2026"),
-            AttendanceData(type: .tardy, value: "June 21, 2026")
-        ]
-        
-        gradeData      = [
-            GradeData(testName: "Intro Algebra Quiz", testScore: "80"),
-            GradeData(testName: "English Grammar Test", testScore: "84"),
-            GradeData(testName: "Biology Chapter Test", testScore: "77"),
-            GradeData(testName: "Health & Fitness Test", testScore: "90")
-        ]
-        
-        collectionView.reloadData()
     }
 }
 
@@ -133,9 +125,12 @@ extension StudentDetailVC: UICollectionViewDataSource {
             switch indexPath.item {
                 
             case 0:
-                cell.set(type: .absences, value: "0")           //Static value
+                cell.set(type: .absences, value: "\(selectedStudent.absencesCount)")
             case 1:
-                cell.set(type: .avgGrade, value: "82.8%")       //Static value
+                cell.set(
+                    type: .avgGrade,
+                    value: "\(selectedStudent.currentGradePercentage.formatted(.number.precision(.fractionLength(1))))%"
+                )
             case 2:
                 cell.set(type: .gradeLevel, value: "Gr \(selectedStudent.gradeLevel)")
             default:
@@ -150,18 +145,23 @@ extension StudentDetailVC: UICollectionViewDataSource {
             if selectedSegmentControlIndex == 0 {
                 let record = attendanceData[indexPath.item]
                 
-                switch record.type {
-                case .present:
-                    cell.set(type: .present, value: record.value, testName: nil)
-                case .absent:
-                    cell.set(type: .absent, value: record.value, testName: nil)
-                case .tardy:
-                    cell.set(type: .tardy, value: record.value, testName: nil)
+                switch record.status {
+                case "P":
+                    cell.set(type: .present, value: record.date ?? "N/A", testName: nil, maxPoints: nil)
+                case "A":
+                    cell.set(type: .absent, value: record.date ?? "N/A", testName: nil, maxPoints: nil)
+                default:
+                    cell.set(type: .tardy, value: record.date ?? "N/A", testName: nil, maxPoints: nil)
                 }
             } else {
-                let record = gradeData[indexPath.item]
+                let gradeRecord = gradeData[indexPath.item]
                 
-                cell.set(type: .grade, value: record.testScore, testName: record.testName)
+                cell.set(
+                    type: .grade,
+                    value: String(gradeRecord.earnedPoints),
+                    testName: gradeRecord.parentAssignment?.title ?? "N/A",
+                    maxPoints: String(gradeRecord.parentAssignment?.maxPoints ?? 0)
+                )
             }
             
             return cell
@@ -229,6 +229,11 @@ extension StudentDetailVC: UICollectionViewDelegate {
             } else if indexPath.item == totalItems - 1{
                 studentLogCell.layer.cornerRadius  = 18
                 studentLogCell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            }
+            
+            if totalItems == 1 {
+                studentLogCell.layer.cornerRadius = 18
+                studentLogCell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             }
             
             studentLogCell.clipsToBounds = true
