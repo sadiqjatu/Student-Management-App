@@ -209,8 +209,8 @@ class CoreDataManager {
             let attentionData = students.map({ studentObj in
                 return AttentionRecord(
                     studentName: "\(studentObj.firstName ?? "") \(studentObj.lastName ?? "")",
-                    value: studentObj.currentGradePercentage <= 60 ? "D" : "\(studentObj.absencesCount)",
-                    issueType: studentObj.currentGradePercentage <= 60 ? .grade : .attendance
+                    value: studentObj.currentGradePercentage <= 60 && (studentObj.grades?.count ?? 0) > 0 ? "D" : "\(studentObj.absencesCount)",
+                    issueType: studentObj.currentGradePercentage <= 60 && (studentObj.grades?.count ?? 0) > 0 ? .grade : .attendance
                 )
             })
             

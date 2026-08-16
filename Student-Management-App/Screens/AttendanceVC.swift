@@ -28,12 +28,20 @@ class AttendanceVC: UIViewController {
     }
     
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if context.hasChanges {
+            saveContext()
+        }
+    }
+    
+    
     func loadData(for dateString: String) {
         //1. Fetch all the students
         self.students    = CoreDataManager.shared.fetchAllStudents()
         
         //2. Fetch attendance records for this EXACT date
-        print(dateString)
         let todayRecords = CoreDataManager.shared.fetchAttendanceRecordsForCurrentDate(for: dateString)
         
         //3. Build the dictionary (Lookup Map)
@@ -66,9 +74,17 @@ class AttendanceVC: UIViewController {
             attendanceMap[student]  = newRecord
         }
         
+        
+        student.absencesCount = Int16(CoreDataManager.shared.fetchStudentAbsscenesCount(forStudent: student))
+        
+        //Do not call context.save() here as this would hit the db everytime
+    }
+    
+    
+    func saveContext() {
         do {
+            print("context.save()")
             try context.save()
-            student.absencesCount = Int16(CoreDataManager.shared.fetchStudentAbsscenesCount(forStudent: student))
         } catch {
             print("Error saving or updating attendance records \(error.localizedDescription)")
         }
@@ -120,12 +136,18 @@ class AttendanceVC: UIViewController {
         let localDeviceDate = currentDate.addingTimeInterval(localOffset)
         
         calendarView.availableDateRange = DateInterval(start: pastDate, end: localDeviceDate)
-        print(localDeviceDate)
         
         //Delegates & selection
         //Set up single-date selection behaviour
+        let selectedDateComponent      = Calendar.current.dateComponents([.calendar, .year, .month, .day], from: Date())
         let selection                  = UICalendarSelectionSingleDate(delegate: self)
+        selection.selectedDate         = selectedDateComponent
         calendarView.selectionBehavior = selection
+        
+        //Load attendance list
+        print(selectedDateComponent.date ?? "no date")
+        selectedDate = selectedDateComponent.date?.convertToYearMonthDay() ?? Date().convertToYearMonthDay()
+        loadData(for: selectedDate)
         
         //Setup constraints
         NSLayoutConstraint.activate([
@@ -166,6 +188,7 @@ extension AttendanceVC: UICalendarSelectionSingleDateDelegate {
         loadData(for: date.convertToYearMonthDay())
         self.selectedDate = date.convertToYearMonthDay()
     }
+    
     
     func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {
         return true
